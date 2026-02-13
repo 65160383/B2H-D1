@@ -1,0 +1,1283 @@
+<!doctype html>
+<html lang="th">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>B2H — Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f8f9fa
+        }
+    </style>
+    <style>
+        .fav-icon { width:18px;height:18px;vertical-align:middle;margin-right:6px }
+        .fav-on { fill:#e74c3c; stroke:#e74c3c }
+        .fav-off { fill:#ffffff; stroke:#e74c3c }
+        @media (max-width:576px) { .fav-text { display:none } }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="#">B2H</a>
+            <div class="d-flex align-items-center">
+                <img id="navAvatar" src="" alt="Avatar" class="rounded-circle" title="ดูโปรไฟล์"
+                    style="width:32px;height:32px;object-fit:cover;display:none;cursor:pointer;">
+                <span id="navUser" class="ms-2 me-3 text-muted" style="cursor:pointer" title="ดูโปรไฟล์"></span>
+                <button id="favoritesBtn" class="btn btn-outline-secondary btn-sm me-2" title="รายการที่ชอบ">❤ รายการที่ชอบ</button>
+                <button id="logout" class="btn btn-outline-secondary btn-sm">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="mb-0">ตลาดของมือสอง</h3>
+            <div>
+                <button id="interestedBtn" class="btn btn-outline-secondary me-2" title="คนที่สนใจ">👀 คนที่สนใจ</button>
+                <button id="myProductsBtn" class="btn btn-outline-primary me-2">สินค้าของฉัน</button>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#postModal">โพสต์สินค้า</button>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Left: Filters -->
+            <aside class="col-md-3 mb-3">
+                <div class="card p-3">
+                    <h6 class="mb-2">กรองสินค้า</h6>
+                    <div class="mb-3">
+                        <div class="fw-bold">หมวดหมู่</div>
+                        <div id="filterCategories" class="mt-2">
+                            <div class="form-check">
+                                <input class="form-check-input filter-cat" type="checkbox" value="หนังสือ / เอกสาร" id="cat_books">
+                                <label class="form-check-label" for="cat_books">หนังสือ / เอกสาร</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input filter-cat" type="checkbox" value="อุปกรณ์ไอที" id="cat_it">
+                                <label class="form-check-label" for="cat_it">อุปกรณ์ไอที</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input filter-cat" type="checkbox" value="เสื้อผ้า" id="cat_clothes">
+                                <label class="form-check-label" for="cat_clothes">เสื้อผ้า</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input filter-cat" type="checkbox" value="ของใช้ในหอพัก" id="cat_dorm">
+                                <label class="form-check-label" for="cat_dorm">ของใช้ในหอพัก</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input filter-cat" type="checkbox" value="ยานพาหนะ" id="cat_vehicle">
+                                <label class="form-check-label" for="cat_vehicle">ยานพาหนะ</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input filter-cat" type="checkbox" value="สุขภาพ / ความงาม" id="cat_beauty">
+                                <label class="form-check-label" for="cat_beauty">สุขภาพ / ความงาม</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input filter-cat" type="checkbox" value="เกม / บันเทิง" id="cat_game">
+                                <label class="form-check-label" for="cat_game">เกม / บันเทิง</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input filter-cat" type="checkbox" value="อื่น ๆ" id="cat_other">
+                                <label class="form-check-label" for="cat_other">อื่น ๆ</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="fw-bold">ช่วงราคา</div>
+                        <div class="mt-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="priceRange" id="price_all" value="all" checked>
+                                <label class="form-check-label" for="price_all">ทั้งหมด</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="priceRange" id="price_0_100" value="0-100">
+                                <label class="form-check-label" for="price_0_100">0 - 100</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="priceRange" id="price_101_500" value="101-500">
+                                <label class="form-check-label" for="price_101_500">101 - 500</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="priceRange" id="price_501_1000" value="501-1000">
+                                <label class="form-check-label" for="price_501_1000">501 - 1,000</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="priceRange" id="price_1001_5000" value="1001-5000">
+                                <label class="form-check-label" for="price_1001_5000">1,001 - 5,000</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="priceRange" id="price_5001_plus" value="5001-">
+                                <label class="form-check-label" for="price_5001_plus">5,001+</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button id="clearFilters" class="btn btn-sm btn-outline-secondary">ล้างตัวกรอง</button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Right: Search + List -->
+            <section class="col-md-9">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <input id="search" class="form-control" placeholder="ค้นหาสินค้า (ชื่อ/คำอธิบาย)">
+                    </div>
+                </div>
+
+                <div id="list" class="row g-3"></div>
+            </section>
+        </div>
+    </main>
+
+        <!-- Interested Modal -->
+        <div class="modal fade" id="interestedModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">คนที่สนใจสินค้าของฉัน</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="interestedList" class="list-group"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- Post Modal -->
+    <div class="modal fade" id="postModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">โพสต์สินค้า</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="postForm" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label class="form-label">ชื่อสินค้า</label>
+                            <input id="title" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">คำอธิบาย</label>
+                            <textarea id="desc" class="form-control" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label d-block">หมวดหมู่</label>
+                            <div class="row row-cols-1 row-cols-md-2 g-1">
+                                <div class="col">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="category" id="cat1"
+                                            value="หนังสือ / เอกสาร" checked>
+                                        <label class="form-check-label" for="cat1">1. หนังสือ / เอกสาร</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="category" id="cat2"
+                                            value="อุปกรณ์ไอที">
+                                        <label class="form-check-label" for="cat2">2. อุปกรณ์ไอที</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="category" id="cat3"
+                                            value="เสื้อผ้า">
+                                        <label class="form-check-label" for="cat3">3. เสื้อผ้า</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="category" id="cat4"
+                                            value="ของใช้ในหอพัก">
+                                        <label class="form-check-label" for="cat4">4. ของใช้ในหอพัก</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="category" id="cat5"
+                                            value="ยานพาหนะ">
+                                        <label class="form-check-label" for="cat5">5. ยานพาหนะ</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="category" id="cat6"
+                                            value="สุขภาพ / ความงาม">
+                                        <label class="form-check-label" for="cat6">6. สุขภาพ / ความงาม</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="category" id="cat7"
+                                            value="เกม / บันเทิง">
+                                        <label class="form-check-label" for="cat7">7. เกม / บันเทิง</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="category" id="cat8"
+                                            value="อื่น ๆ">
+                                        <label class="form-check-label" for="cat8">8. อื่น ๆ</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">ราคา</label>
+                                <input id="price" class="form-control" type="number" placeholder="0">
+                            </div>
+                            <div class="col-md-8 mb-3">
+                                <label class="form-label">ช่องทางติดต่อ (LINE/Facebook)</label>
+                                <input id="contact" class="form-control" placeholder="LINE ID หรือ ลิงก์ Facebook/IG">
+                                <div id="contactPresetButtons" class="mt-1 d-flex flex-wrap gap-2"></div>
+                                <small class="text-muted">คลิกปุ่มเพื่อใช้ช่องทางติดต่อจากโปรไฟล์</small>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">รูปสินค้า (อัปโหลดได้หลายรูป)</label>
+                            <input id="images" name="images" class="form-control" type="file" accept="image/*" multiple>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                    <button id="savePost" type="button" class="btn btn-primary">โพสต์</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div class="modal fade" id="productDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailTitle">รายละเอียดสินค้า</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="detailImages" class="mb-2 d-flex flex-wrap gap-2"></div>
+                    <p class="mb-2"><strong>ชื่อสินค้า:</strong> <span id="detailProductTitle"></span></p>
+                    <p class="mb-1"><strong>หมวดหมู่:</strong> <span id="detailCategory"></span></p>
+                    <p class="mb-1"><strong>ราคา:</strong> <span id="detailPrice"></span></p>
+                    <p class="mb-1"><strong>ติดต่อ:</strong> <span id="detailContact"></span></p>
+                    <hr>
+                    <p class="mb-0" id="detailDescription"></p>
+                </div>
+                  <div class="modal-footer">
+                            <div class="me-auto">
+                                <button id="detailEditBtn" type="button" class="btn btn-outline-secondary me-2" style="display:none;">แก้ไข</button>
+                                <button id="detailMarkSoldBtn" type="button" class="btn btn-success me-2" style="display:none;">สำเร็จการขาย</button>
+                                <button id="detailReviewBtn" type="button" class="btn btn-outline-success me-2" style="display:none;">รีวิว</button>
+                                <button id="detailFavBtn" type="button" class="btn btn-outline-danger">
+                                    <svg class="fav-icon fav-off" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 21s-7.5-4.9-10-7.3C-1 9.6 3 4 7.2 6.1 9.1 7.2 10 9 12 10.5c2-1.5 2.9-3.3 4.8-4.4C21 4 25 9.6 22 13.7 19.5 16.1 12 21 12 21z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    <span class="fav-text">เพิ่มสินค้าที่ชอบ</span>
+                                </button>
+                            </div>
+                            <button id="detailDeleteBtn" type="button" class="btn btn-outline-danger me-2" style="display:none;">ลบ</button>
+                            <button id="detailInterestBtn" type="button" class="btn btn-outline-primary me-2" style="display:none;">สนใจ</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+                        </div>
+            </div>
+        </div>
+    </div>
+    
+        <!-- Favorites Modal -->
+        <div class="modal fade" id="favoritesModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">รายการที่ชอบ</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="favoritesList" class="row g-3"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- Profile Modal -->
+    <div class="modal fade" id="profileModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">โปรไฟล์ผู้ใช้</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="profileForm">
+                        <div class="text-center mb-3">
+                            <img id="profileImagePreview" src="" alt="Profile" class="rounded-circle mb-2"
+                                style="width:96px;height:96px;object-fit:cover;display:none;">
+                        </div>
+                        <input type="hidden" id="profile_image">
+                        <div class="mb-3">
+                            <label class="form-label">เลือกรูปโปรไฟล์</label>
+                            <input id="profile_image_file" class="form-control" type="file" accept="image/*">
+                            <div class="form-text">เลือกรูปจากเครื่องของคุณ</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">ชื่อ</label>
+                            <input id="profile_first_name" class="form-control" placeholder="ชื่อ">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">นามสกุล</label>
+                            <input id="profile_last_name" class="form-control" placeholder="นามสกุล">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">อีเมล</label>
+                            <input id="profile_email" class="form-control" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Facebook</label>
+                            <input id="contact_facebook" class="form-control" placeholder="ลิงก์หรือชื่อ Facebook">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">LINE</label>
+                            <input id="contact_line" class="form-control" placeholder="LINE ID">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Instagram</label>
+                            <input id="contact_instagram" class="form-control" placeholder="ชื่อ Instagram">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+                    <button id="saveProfile" type="button" class="btn btn-primary">บันทึก</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const tokenKey = 'b2h_token';
+
+        let currentUser = null;
+        let products = [];
+        let profileImageFile = null;
+        let editProductId = null;
+
+        function updateNavUserUI() {
+            const emailSpan = document.getElementById('navUser');
+            const avatarImg = document.getElementById('navAvatar');
+            if (!currentUser) {
+                emailSpan.textContent = '';
+                avatarImg.style.display = 'none';
+                return;
+            }
+            emailSpan.textContent = currentUser.email || '';
+            const imgUrl = currentUser.profile_image || '';
+            if (imgUrl) {
+                avatarImg.src = imgUrl;
+                avatarImg.style.display = 'inline-block';
+            } else {
+                avatarImg.style.display = 'none';
+            }
+        }
+                // (removed stray global button logic) — button visibility handled per-product inside openProductDetail
+
+        function updateContactPresets() {
+            const container = document.getElementById('contactPresetButtons');
+            if (!container) return;
+            container.innerHTML = '';
+            if (!currentUser) return;
+
+            const sources = [
+                { key: 'contact_line', label: 'LINE' },
+                { key: 'contact_facebook', label: 'Facebook' },
+                { key: 'contact_instagram', label: 'Instagram' },
+            ];
+
+            const contactInput = document.getElementById('contact');
+
+            sources.forEach(src => {
+                const value = (currentUser[src.key] || '').trim();
+                if (!value) return;
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'btn btn-outline-secondary btn-sm';
+                btn.textContent = src.label;
+                btn.addEventListener('click', () => {
+                    if (contactInput) {
+                        const part = `${src.label}: ${value}`;
+                        const raw = (contactInput.value || '').trim();
+                        let parts = raw ? raw.split(/\s*\|\s*/).filter(Boolean) : [];
+                        const index = parts.indexOf(part);
+                        if (index === -1) {
+                            parts.push(part);
+                        } else {
+                            parts.splice(index, 1);
+                        }
+                        contactInput.value = parts.join(' | ');
+                    }
+                });
+                container.appendChild(btn);
+            });
+        }
+
+        async function checkAuth() {
+            const token = localStorage.getItem(tokenKey);
+            if (!token) return location.href = '/';
+            const res = await fetch('/me', { headers: { 'Authorization': 'Bearer ' + token } });
+            const data = await res.json();
+            if (!data.loggedIn) { localStorage.removeItem(tokenKey); return location.href = '/'; }
+            currentUser = data.user;
+            updateNavUserUI();
+            updateContactPresets();
+        }
+
+        function getActiveFilters() {
+            // categories: array of selected category values
+            const cats = Array.from(document.querySelectorAll('.filter-cat:checked')).map(el => el.value);
+            const priceEl = document.querySelector('input[name="priceRange"]:checked');
+            const priceRange = priceEl ? priceEl.value : 'all';
+            return { categories: cats, priceRange };
+        }
+
+        function priceInRange(price, range) {
+            if (range === 'all') return true;
+            const p = Number(price);
+            if (Number.isNaN(p)) return false;
+            if (range === '0-100') return p >= 0 && p <= 100;
+            if (range === '101-500') return p >= 101 && p <= 500;
+            if (range === '501-1000') return p >= 501 && p <= 1000;
+            if (range === '1001-5000') return p >= 1001 && p <= 5000;
+            if (range === '5001-') return p >= 5001;
+            return true;
+        }
+
+        function renderList(filter = '') {
+            const container = document.getElementById('list'); container.innerHTML = '';
+            const lower = (filter || '').toLowerCase();
+            const active = getActiveFilters();
+
+            const items = products.filter(i => {
+                const text = ((i.title || '') + ' ' + (i.description || '')).toLowerCase();
+                if (!text.includes(lower)) return false;
+                // category filter
+                if (active.categories && active.categories.length) {
+                    const cat = (i.category || '').trim();
+                    if (!cat || active.categories.indexOf(cat) === -1) return false;
+                }
+                // price filter
+                if (!priceInRange(i.price, active.priceRange)) return false;
+                return true;
+            });
+
+            if (!items.length) return container.innerHTML = '<div class="col-12"><div class="alert alert-info">ยังไม่มีรายการสินค้า</div></div>';
+            items.forEach(item => {
+                const col = document.createElement('div'); col.className = 'col-md-4';
+                (function(){
+                    // Map known status values to Thai labels. Show status badge for any status.
+                    const statusMap = { 'available': 'พร้อมขาย', 'reserved': 'จองแล้ว', 'selling': 'กำลังขาย', 'sold': 'ขายแล้ว' };
+                    const status = (item.status !== undefined && item.status !== null) ? item.status : null;
+                    const statusLabel = status ? (statusMap[String(status)] || escapeHtml(String(status))) : '';
+                    const statusHtml = statusLabel ? `<div class="position-absolute bottom-0 end-0 m-2"><span class="badge bg-warning text-dark">${statusLabel}</span></div>` : '';
+                    col.innerHTML = `
+                        <div class="card h-100 product-card position-relative" data-product-id="${escapeHtml(String(item.product_id))}" style="cursor:pointer;">
+                            ${item.img_url ? `<img src="${escapeHtml(item.img_url)}" class="card-img-top" style="object-fit:cover;height:200px">` : ''}
+                            ${statusHtml}
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">${escapeHtml(item.title)}</h5>
+                                <p class="card-text text-muted mb-2 flex-grow-1">${escapeHtml(item.description || '')}</p>
+                                <p class="mb-1"><strong>ราคา:</strong> ${escapeHtml(item.price)}</p>
+                                <p class="mb-0"><strong>ติดต่อ:</strong> ${escapeHtml(item.contact || '-')}</p>
+                            </div>
+                        </div>
+                    `;
+                })();
+                container.appendChild(col);
+            });
+        }
+
+        function escapeHtml(s) { return (s || '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;'); }
+
+        async function loadProducts() {
+            try {
+                const res = await fetch('/products');
+                const data = await res.json();
+                if (data.success) {
+                    products = data.products || [];
+                } else {
+                    products = [];
+                }
+            } catch (e) {
+                products = [];
+            }
+            renderList(document.getElementById('search').value || '');
+        }
+
+        function openProfileModal() {
+            if (!currentUser) return;
+            const imgEl = document.getElementById('profileImagePreview');
+            const imgUrl = currentUser.profile_image || '';
+            if (imgUrl) {
+                imgEl.src = imgUrl;
+                imgEl.style.display = 'inline-block';
+            } else {
+                imgEl.style.display = 'none';
+            }
+
+            document.getElementById('profile_image').value = currentUser.profile_image || '';
+            const fullName = (currentUser.name || '').trim();
+            let first = '';
+            let last = '';
+            if (fullName) {
+                const parts = fullName.split(/\s+/);
+                first = parts.shift() || '';
+                last = parts.join(' ');
+            }
+            document.getElementById('profile_first_name').value = first;
+            document.getElementById('profile_last_name').value = last;
+            document.getElementById('profile_email').value = currentUser.email || '';
+            document.getElementById('contact_facebook').value = currentUser.contact_facebook || '';
+            document.getElementById('contact_line').value = currentUser.contact_line || '';
+            document.getElementById('contact_instagram').value = currentUser.contact_instagram || '';
+
+            const modalEl = document.getElementById('profileModal');
+            const modal = new bootstrap.Modal(modalEl);
+            modal.show();
+        }
+
+        async function openProductDetail(productId) {
+            if (!productId) return;
+            try {
+                const res = await fetch('/product/' + encodeURIComponent(productId));
+                const data = await res.json();
+                if (!data.success || !data.product) {
+                    alert(data.message || 'ไม่พบข้อมูลสินค้า');
+                    return;
+                }
+                const p = data.product;
+                // Ensure we have currentUser (in case openProductDetail was called before auth finished)
+                if (!currentUser) {
+                    try {
+                        const token = localStorage.getItem(tokenKey);
+                        if (token) {
+                            const meRes = await fetch('/me', { headers: { 'Authorization': 'Bearer ' + token } });
+                            const meData = await meRes.json();
+                            if (meData && meData.loggedIn && meData.user) {
+                                currentUser = meData.user;
+                                try { updateNavUserUI(); updateContactPresets(); } catch(e) {}
+                            }
+                        }
+                    } catch (e) {
+                        // ignore
+                    }
+                }
+
+                // Show seller name with a link to the seller's shop page
+                const sellerName = (p.seller_name || '').trim() || p.seller_email || 'รายละเอียดสินค้า';
+                const sellerId = p.seller_id || '';
+                const titleEl = document.getElementById('detailTitle');
+                titleEl.innerHTML = `${escapeHtml(sellerName)} <a class="btn btn-sm btn-outline-primary ms-2" href="/seller.html?seller_id=${encodeURIComponent(sellerId)}">ร้านค้า</a>`;
+                document.getElementById('detailProductTitle').textContent = p.title || '-';
+                document.getElementById('detailCategory').textContent = p.category || '-';
+                document.getElementById('detailPrice').textContent = (p.price != null ? p.price : '-');
+                document.getElementById('detailContact').textContent = p.contact || '-';
+                document.getElementById('detailDescription').textContent = p.description || '';
+
+                const imagesContainer = document.getElementById('detailImages');
+                imagesContainer.innerHTML = '';
+                const images = p.images || [];
+                if (images.length) {
+                    images.forEach((url) => {
+                        const img = document.createElement('img');
+                        img.src = url;
+                        img.alt = 'Product image';
+                        img.style.width = '150px';
+                        img.style.height = '150px';
+                        img.style.objectFit = 'cover';
+                        img.className = 'border rounded';
+                        imagesContainer.appendChild(img);
+                    });
+                } else if (p.img_url) {
+                    const img = document.createElement('img');
+                    img.src = p.img_url;
+                    img.alt = 'Product image';
+                    img.style.width = '150px';
+                    img.style.height = '150px';
+                    img.style.objectFit = 'cover';
+                    img.className = 'border rounded';
+                    imagesContainer.appendChild(img);
+                } else {
+                    const span = document.createElement('span');
+                    span.textContent = 'ไม่มีรูปภาพสินค้า';
+                    imagesContainer.appendChild(span);
+                }
+
+                // Buttons: Edit / Interest / Delete — visibility depends on whether current user is the seller
+                    try {
+                    const editBtn = document.getElementById('detailEditBtn');
+                    if (editBtn) {
+                        if (currentUser && currentUser.user_id && String(currentUser.user_id) === String(sellerId)) {
+                            editBtn.style.display = '';
+                            editBtn.onclick = () => openEditProduct(productId);
+                        } else {
+                            editBtn.style.display = 'none';
+                        }
+                    }
+
+                    const markSoldBtn = document.getElementById('detailMarkSoldBtn');
+                    if (markSoldBtn) {
+                        if (currentUser && currentUser.user_id && String(currentUser.user_id) === String(sellerId)) {
+                            markSoldBtn.style.display = '';
+                            markSoldBtn.onclick = async () => {
+                                if (!confirm('ยืนยันว่าขายสินค้าชิ้นนี้เรียบร้อยแล้ว?')) return;
+                                const token = localStorage.getItem(tokenKey);
+                                if (!token) { alert('กรุณาเข้าสู่ระบบ'); return; }
+                                try {
+                                    markSoldBtn.disabled = true;
+                                    const res = await fetch('/product/' + encodeURIComponent(productId) + '/status', {
+                                        method: 'PUT',
+                                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                                        body: JSON.stringify({ status: 'sold' })
+                                    });
+                                    const jr = await res.json();
+                                    if (jr.success) {
+                                        const modalEl = document.getElementById('productDetailModal');
+                                        const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                                        modal.hide();
+                                        await loadProducts();
+                                        alert('ทำเครื่องหมายว่า "ขายแล้ว" เรียบร้อย');
+                                    } else {
+                                        alert(jr.message || 'ไม่สามารถเปลี่ยนสถานะได้');
+                                    }
+                                } catch (e) {
+                                    alert('เกิดข้อผิดพลาด');
+                                } finally { markSoldBtn.disabled = false; }
+                            };
+                        } else {
+                            markSoldBtn.style.display = 'none';
+                        }
+                    }
+
+                    const interestBtn = document.getElementById('detailInterestBtn');
+                    const reviewBtn = document.getElementById('detailReviewBtn');
+                    if (interestBtn) {
+                        // hide interest button if item is sold
+                        if (p.status === 'sold') {
+                            interestBtn.style.display = 'none';
+                        } else if (currentUser && currentUser.user_id && String(currentUser.user_id) === String(sellerId)) {
+                            interestBtn.style.display = 'none';
+                        } else {
+                            interestBtn.style.display = '';
+                            // determine current interest state and update label
+                            let isInterested = false;
+                            interestBtn.disabled = true;
+                            interestBtn.textContent = 'กำลังโหลด...';
+                            try {
+                                const token = localStorage.getItem(tokenKey);
+                                if (token) {
+                                    const favRes = await fetch('/interests', { headers: { 'Authorization': 'Bearer ' + token } });
+                                    const favData = await favRes.json();
+                                    if (favData.success && Array.isArray(favData.products)) {
+                                        isInterested = favData.products.some(p => String(p.product_id) === String(productId));
+                                    }
+                                }
+                            } catch (e) {
+                                // ignore
+                            }
+                            interestBtn.disabled = false;
+                            interestBtn.textContent = isInterested ? 'ยกเลิกสนใจ' : 'สนใจ';
+
+                            interestBtn.onclick = async () => {
+                                const token = localStorage.getItem(tokenKey);
+                                if (!token) { alert('กรุณาเข้าสู่ระบบเพื่อใช้งาน'); return; }
+                                try {
+                                    interestBtn.disabled = true;
+                                        if (isInterested) {
+                                        // remove interest (toggle)
+                                        const r = await fetch('/interests/toggle', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ product_id: productId }) });
+                                        const jr = await r.json();
+                                        if (jr.success) {
+                                            isInterested = false;
+                                            interestBtn.textContent = 'สนใจ';
+                                            // refresh product list so status badges update
+                                            try { await loadProducts(); } catch(e) {}
+                                            alert('ยกเลิกความสนใจเรียบร้อยแล้ว');
+                                        } else {
+                                            alert(jr.message || 'ไม่สามารถยกเลิกได้');
+                                        }
+                                        } else {
+                                        // add interest
+                                        const r = await fetch('/interests/add', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ product_id: productId }) });
+                                        if (r.status === 404) {
+                                            const r2 = await fetch('/interests/toggle', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ product_id: productId }) });
+                                            const jr2 = await r2.json();
+                                            if (jr2.success) {
+                                                isInterested = !jr2.removed;
+                                                interestBtn.textContent = isInterested ? 'ยกเลิกสนใจ' : 'สนใจ';
+                                                alert(jr2.removed ? 'ยกเลิกความสนใจแล้ว' : 'บันทึกความสนใจเรียบร้อยแล้ว');
+                                            } else alert(jr2.message || 'ไม่สามารถบันทึกได้');
+                                        } else {
+                                            const jr = await r.json();
+                                            if (jr.success) {
+                                                isInterested = !!jr.added;
+                                                interestBtn.textContent = isInterested ? 'ยกเลิกสนใจ' : 'สนใจ';
+                                                if (jr.added) alert('บันทึกความสนใจเรียบร้อยแล้ว');
+                                                else alert('คุณได้แสดงความสนใจสินค้านี้แล้ว');
+                                            } else {
+                                                alert(jr.message || 'ไม่สามารถบันทึกได้');
+                                            }
+                                        }
+                                    }
+                                } catch (e) {
+                                    alert('เกิดข้อผิดพลาด');
+                                } finally { interestBtn.disabled = false; }
+                            };
+                        }
+                    }
+
+                    // Review button: show only if product status is 'sold' and current user is the buyer
+                    if (reviewBtn) {
+                        try {
+                            reviewBtn.style.display = 'none';
+                            if (p.status === 'sold' && currentUser && currentUser.user_id && String(currentUser.user_id) === String(p.buyer_id)) {
+                                reviewBtn.style.display = '';
+                                reviewBtn.onclick = async () => {
+                                    const ratingInput = prompt('ให้คะแนนสินค้า (1-5)', '5');
+                                    if (ratingInput === null) return; // cancelled
+                                    const rating = Number(ratingInput);
+                                    if (Number.isNaN(rating) || rating < 1 || rating > 5) { alert('กรุณาระบุคะแนนตั้งแต่ 1 ถึง 5'); return; }
+                                    const comment = prompt('เขียนรีวิว (ไม่บังคับ)', '');
+                                    const token = localStorage.getItem(tokenKey);
+                                    if (!token) { alert('กรุณาเข้าสู่ระบบ'); return; }
+                                    try {
+                                        reviewBtn.disabled = true;
+                                        const res = await fetch('/product/' + encodeURIComponent(productId) + '/review', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                                            body: JSON.stringify({ rating: rating, comment: comment })
+                                        });
+                                        const jr = await res.json();
+                                        if (jr.success) {
+                                            alert('ขอบคุณสำหรับรีวิว');
+                                        } else {
+                                            alert(jr.message || 'ไม่สามารถส่งรีวิวได้');
+                                        }
+                                    } catch (e) { alert('เกิดข้อผิดพลาด'); }
+                                    finally { reviewBtn.disabled = false; }
+                                };
+                            }
+                        } catch (e) { reviewBtn.style.display = 'none'; }
+                    }
+
+                    const deleteBtn = document.getElementById('detailDeleteBtn');
+                    if (deleteBtn) {
+                        if (currentUser && currentUser.user_id && String(currentUser.user_id) === String(sellerId)) {
+                            deleteBtn.style.display = '';
+                            deleteBtn.onclick = async () => {
+                                if (!confirm('ต้องการลบสินค้านี้จริงหรือไม่?')) return;
+                                const token = localStorage.getItem(tokenKey);
+                                if (!token) { alert('กรุณาเข้าสู่ระบบ'); return; }
+                                try {
+                                    deleteBtn.disabled = true;
+                                    const r = await fetch('/product/' + encodeURIComponent(productId), { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token } });
+                                    const jr = await r.json();
+                                    if (jr.success) {
+                                        const modalEl = document.getElementById('productDetailModal');
+                                        const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                                        modal.hide();
+                                        await loadProducts();
+                                    } else {
+                                        alert(jr.message || 'ไม่สามารถลบสินค้าได้');
+                                    }
+                                } catch (e) { alert('เกิดข้อผิดพลาดในการลบ'); }
+                                finally { deleteBtn.disabled = false; }
+                            };
+                        } else {
+                            deleteBtn.style.display = 'none';
+                        }
+                    }
+                } catch (e) {
+                    // ignore UI button setup errors
+                }
+
+                // favorite button state (heart icon + text)
+                const favBtn = document.getElementById('detailFavBtn');
+                let isFav = false;
+                if (favBtn) {
+                    // If current user is the seller, hide the favorite button (can't favorite own product)
+                    try {
+                        if (currentUser && currentUser.user_id && String(currentUser.user_id) === String(sellerId)) {
+                            favBtn.style.display = 'none';
+                        } else {
+                            favBtn.style.display = '';
+                            const favIcon = favBtn.querySelector('.fav-icon');
+                            const favText = favBtn.querySelector('.fav-text');
+                            favBtn.disabled = true;
+                            if (favText) favText.textContent = 'กำลังโหลด...';
+                            try {
+                                const token = localStorage.getItem(tokenKey);
+                                if (token) {
+                                    const favRes = await fetch('/favorites', { headers: { 'Authorization': 'Bearer ' + token } });
+                                    const favData = await favRes.json();
+                                    if (favData.success && Array.isArray(favData.products)) {
+                                        isFav = favData.products.some(p => String(p.product_id) === String(productId));
+                                    }
+                                }
+                            } catch (e) {
+                                // ignore
+                            }
+                            favBtn.disabled = false;
+                            if (favText) favText.textContent = 'เพิ่มสินค้าที่ชอบ';
+                            // update text and appearance
+                            if (favText) favText.textContent = isFav ? 'เอาออกจากรายการที่ชอบ' : 'เพิ่มสินค้าที่ชอบ';
+                            favBtn.classList.toggle('btn-danger', isFav);
+                            favBtn.classList.toggle('btn-outline-danger', !isFav);
+                            // attach toggle handler
+                            favBtn.onclick = async () => {
+                                const token = localStorage.getItem(tokenKey);
+                                if (!token) { alert('กรุณาเข้าสู่ระบบเพื่อใช้งาน'); return; }
+                                try {
+                                    favBtn.disabled = true;
+                                    if (favText) favText.textContent = 'กำลังเปลี่ยน...';
+                                    const r = await fetch('/favorites/toggle', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ product_id: productId }) });
+                                    const jr = await r.json();
+                                        if (jr.success) {
+                                        isFav = !!jr.added;
+                                        if (favText) favText.textContent = isFav ? 'เอาออกจากรายการที่ชอบ' : 'เพิ่มสินค้าที่ชอบ';
+                                        favBtn.classList.toggle('btn-danger', isFav);
+                                        favBtn.classList.toggle('btn-outline-danger', !isFav);
+                                        try { await loadProducts(); } catch(e) {}
+                                    } else {
+                                        alert(jr.message || 'ไม่สามารถเปลี่ยนสถานะได้');
+                                    }
+                                } catch (err) {
+                                    alert('เกิดข้อผิดพลาด');
+                                } finally {
+                                    favBtn.disabled = false;
+                                }
+                            };
+                        }
+                    } catch (e) {
+                        // fallback: show button
+                        favBtn.style.display = '';
+                    }
+                }
+
+                const modalEl = document.getElementById('productDetailModal');
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+            } catch (err) {
+                alert('เกิดข้อผิดพลาดในการโหลดข้อมูลสินค้า');
+            }
+        }
+
+        // Open post modal in edit mode for a product
+        async function openEditProduct(productId) {
+            if (!productId) return alert('ไม่พบบทความสินค้าเพื่อแก้ไข');
+            try {
+                const res = await fetch('/product/' + encodeURIComponent(productId));
+                const data = await res.json();
+                if (!data.success || !data.product) {
+                    alert(data.message || 'ไม่พบข้อมูลสินค้า');
+                    return;
+                }
+                const p = data.product;
+                document.getElementById('title').value = p.title || '';
+                document.getElementById('desc').value = p.description || '';
+                document.getElementById('price').value = (p.price != null ? p.price : '');
+                document.getElementById('contact').value = p.contact || '';
+                const catEl = document.querySelector('input[name="category"][value="' + (p.category || '') + '"]');
+                if (catEl) catEl.checked = true;
+                // clear file input
+                const imagesInput = document.getElementById('images');
+                if (imagesInput) imagesInput.value = null;
+
+                editProductId = productId;
+                const modalEl = document.getElementById('postModal');
+                const modalTitle = modalEl.querySelector('.modal-title');
+                if (modalTitle) modalTitle.textContent = 'แก้ไขสินค้า';
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+            } catch (err) {
+                alert('เกิดข้อผิดพลาดในการโหลดข้อมูลเพื่อแก้ไข');
+            }
+        }
+
+        document.getElementById('savePost').addEventListener('click', async () => {
+            const title = document.getElementById('title').value.trim();
+            if (!title) return alert('กรุณากรอกชื่อสินค้า');
+            const desc = document.getElementById('desc').value.trim();
+            const price = document.getElementById('price').value.trim();
+            if (!price) return alert('กรุณากรอกราคา');
+            const contact = document.getElementById('contact').value.trim();
+            const categoryEl = document.querySelector('input[name="category"]:checked');
+            const category = categoryEl ? categoryEl.value : '';
+            const imagesInput = document.getElementById('images');
+
+            const token = localStorage.getItem(tokenKey);
+            if (!token) { alert('กรุณาเข้าสู่ระบบใหม่'); return location.href = '/'; }
+
+            const formData = new FormData();
+            formData.append('title', title);
+            formData.append('description', desc);
+            formData.append('price', price);
+            formData.append('contact', contact);
+            formData.append('category', category);
+            if (imagesInput && imagesInput.files) {
+                for (const file of imagesInput.files) {
+                    formData.append('images', file);
+                }
+            }
+
+            try {
+                const url = editProductId ? ('/product/' + encodeURIComponent(editProductId)) : '/product';
+                const method = editProductId ? 'PUT' : 'POST';
+                const res = await fetch(url, {
+                    method,
+                    headers: { 'Authorization': 'Bearer ' + token },
+                    body: formData
+                });
+                const data = await res.json();
+                if (!data.success) {
+                    alert(data.message || (editProductId ? 'ไม่สามารถบันทึกการแก้ไขได้' : 'ไม่สามารถโพสต์สินค้าได้'));
+                    return;
+                }
+                await loadProducts();
+                const modalEl = document.getElementById('postModal');
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                modal.hide();
+                document.getElementById('postForm').reset();
+                // reset edit state
+                editProductId = null;
+                const modalTitle = modalEl.querySelector('.modal-title');
+                if (modalTitle) modalTitle.textContent = 'โพสต์สินค้า';
+            } catch (err) {
+                alert('เกิดข้อผิดพลาดในการโพสต์สินค้า');
+            }
+        });
+
+        // Reset edit state when post modal is closed
+        const postModalEl = document.getElementById('postModal');
+        if (postModalEl) {
+            postModalEl.addEventListener('hidden.bs.modal', () => {
+                editProductId = null;
+                document.getElementById('postForm').reset();
+                const modalTitle = postModalEl.querySelector('.modal-title');
+                if (modalTitle) modalTitle.textContent = 'โพสต์สินค้า';
+            });
+        }
+
+        document.getElementById('list').addEventListener('click', (e) => {
+            const container = e.currentTarget;
+            let el = e.target;
+            while (el && el !== container && !el.classList.contains('product-card')) {
+                el = el.parentElement;
+            }
+            if (el && el.classList.contains('product-card')) {
+                const id = el.getAttribute('data-product-id');
+                if (id) openProductDetail(id);
+            }
+        });
+
+        document.getElementById('navUser').addEventListener('click', openProfileModal);
+        document.getElementById('navAvatar').addEventListener('click', openProfileModal);
+
+        document.getElementById('profile_image_file').addEventListener('change', (e) => {
+            const file = e.target.files && e.target.files[0];
+            profileImageFile = file || null;
+            const imgEl = document.getElementById('profileImagePreview');
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    imgEl.src = reader.result;
+                    imgEl.style.display = 'inline-block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                const url = document.getElementById('profile_image').value.trim();
+                if (url) {
+                    imgEl.src = url;
+                    imgEl.style.display = 'inline-block';
+                } else {
+                    imgEl.style.display = 'none';
+                }
+            }
+        });
+
+        document.getElementById('saveProfile').addEventListener('click', async () => {
+            const token = localStorage.getItem(tokenKey);
+            if (!token) { alert('กรุณาเข้าสู่ระบบใหม่'); return location.href = '/'; }
+
+            const firstName = document.getElementById('profile_first_name').value.trim();
+            const lastName = document.getElementById('profile_last_name').value.trim();
+            const combinedName = (firstName + ' ' + lastName).trim();
+
+            const body = {
+                name: combinedName,
+                profile_image: document.getElementById('profile_image').value.trim(),
+                contact_facebook: document.getElementById('contact_facebook').value.trim(),
+                contact_line: document.getElementById('contact_line').value.trim(),
+                contact_instagram: document.getElementById('contact_instagram').value.trim(),
+            };
+
+            try {
+                const res = await fetch('/me', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token,
+                    },
+                    body: JSON.stringify(body),
+                });
+                const data = await res.json();
+                if (!data.success) {
+                    alert(data.message || 'ไม่สามารถบันทึกโปรไฟล์ได้');
+                    return;
+                }
+                currentUser = data.user;
+                updateNavUserUI();
+                updateContactPresets();
+
+                // ถ้ามีเลือกไฟล์รูปใหม่ ให้ส่งไปที่ /me/avatar
+                if (profileImageFile) {
+                    const fd = new FormData();
+                    fd.append('avatar', profileImageFile);
+                    const avatarRes = await fetch('/me/avatar', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': 'Bearer ' + token,
+                        },
+                        body: fd,
+                    });
+                    const avatarData = await avatarRes.json();
+                    if (avatarData.success && avatarData.user) {
+                        currentUser = avatarData.user;
+                        document.getElementById('profile_image').value = currentUser.profile_image || '';
+                        updateNavUserUI();
+                        updateContactPresets();
+                    } else if (!avatarData.success) {
+                        alert(avatarData.message || 'ไม่สามารถอัปโหลดรูปโปรไฟล์ได้');
+                        return;
+                    }
+                }
+
+                const modalEl = document.getElementById('profileModal');
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                modal.hide();
+                profileImageFile = null;
+            } catch (err) {
+                alert('เกิดข้อผิดพลาดในการบันทึกโปรไฟล์');
+            }
+        });
+
+        document.getElementById('search').addEventListener('input', (e) => renderList(e.target.value));
+
+        // Wire filter inputs
+        function setupFilterListeners() {
+            const cats = Array.from(document.querySelectorAll('.filter-cat'));
+            cats.forEach(el => el.addEventListener('change', () => renderList(document.getElementById('search').value || '')));
+            const prices = Array.from(document.querySelectorAll('input[name="priceRange"]'));
+            prices.forEach(el => el.addEventListener('change', () => renderList(document.getElementById('search').value || '')));
+            const clearBtn = document.getElementById('clearFilters');
+            if (clearBtn) clearBtn.addEventListener('click', () => {
+                cats.forEach(c => c.checked = false);
+                const pAll = document.getElementById('price_all'); if (pAll) pAll.checked = true;
+                renderList(document.getElementById('search').value || '');
+            });
+        }
+
+        document.getElementById('logout').addEventListener('click', async () => {
+            localStorage.removeItem(tokenKey);
+            await fetch('/logout', { method: 'POST' });
+            location.href = '/';
+        });
+
+        // Favorites: open modal and load favorites
+        async function openFavorites() {
+            const token = localStorage.getItem(tokenKey);
+            if (!token) { alert('กรุณาเข้าสู่ระบบเพื่อดูรายการที่ชอบ'); return; }
+            try {
+                const res = await fetch('/favorites', { headers: { 'Authorization': 'Bearer ' + token } });
+                const data = await res.json();
+                if (!data.success) { alert(data.message || 'ไม่สามารถโหลดรายการที่ชอบได้'); return; }
+                const list = document.getElementById('favoritesList'); list.innerHTML = '';
+                const items = data.products || [];
+                if (!items.length) { list.innerHTML = '<div class="col-12"><div class="alert alert-info">ยังไม่มีรายการที่ชอบ</div></div>'; }
+                items.forEach(item => {
+                    const col = document.createElement('div'); col.className = 'col-md-4';
+                    col.innerHTML = `
+                        <div class="card h-100">
+                            ${item.img_url ? `<img src="${escapeHtml(item.img_url)}" class="card-img-top" style="object-fit:cover;height:200px;">` : ''}
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">${escapeHtml(item.title)}</h5>
+                                <p class="card-text text-muted mb-2 flex-grow-1">${escapeHtml(item.description || '')}</p>
+                                <p class="mb-1"><strong>ราคา:</strong> ${escapeHtml(item.price)}</p>
+                                <div class="mt-2 d-flex gap-2">
+                                    <button class="btn btn-sm btn-primary btn-view" data-id="${escapeHtml(String(item.product_id))}">ดูสินค้า</button>
+                                    <button class="btn btn-sm btn-outline-danger btn-unfav" data-id="${escapeHtml(String(item.product_id))}">ลบจากที่ชอบ</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    list.appendChild(col);
+                });
+
+                // attach handlers
+                Array.from(document.querySelectorAll('.btn-view')).forEach(b => b.addEventListener('click', (e) => {
+                    const id = e.target.getAttribute('data-id');
+                    if (id) {
+                        const modalEl = document.getElementById('favoritesModal');
+                        const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                        modal.hide();
+                        openProductDetail(id);
+                    }
+                }));
+
+                Array.from(document.querySelectorAll('.btn-unfav')).forEach(b => b.addEventListener('click', async (e) => {
+                    const id = e.target.getAttribute('data-id');
+                    if (!id) return;
+                    try {
+                        const r = await fetch('/favorites/toggle', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ product_id: id }) });
+                        const jr = await r.json();
+                        if (jr.success) {
+                            // refresh favorites modal
+                            openFavorites();
+                        } else {
+                            alert(jr.message || 'ไม่สามารถลบรายการได้');
+                        }
+                    } catch (err) { alert('เกิดข้อผิดพลาด'); }
+                }));
+
+                const modalEl = document.getElementById('favoritesModal');
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+            } catch (err) {
+                alert('เกิดข้อผิดพลาดในการโหลดรายการที่ชอบ');
+            }
+        }
+
+        document.getElementById('favoritesBtn').addEventListener('click', openFavorites);
+
+        // My products button: go to seller page for current user
+        document.getElementById('myProductsBtn').addEventListener('click', async () => {
+            if (currentUser && currentUser.user_id) {
+                return window.location.href = `/seller.html?seller_id=${encodeURIComponent(currentUser.user_id)}`;
+            }
+            const token = localStorage.getItem(tokenKey);
+            if (!token) { alert('กรุณาเข้าสู่ระบบ'); return; }
+            try {
+                const res = await fetch('/me', { headers: { 'Authorization': 'Bearer ' + token } });
+                const data = await res.json();
+                if (data && data.user && data.user.user_id) {
+                    window.location.href = `/seller.html?seller_id=${encodeURIComponent(data.user.user_id)}`;
+                } else {
+                    alert('ไม่พบข้อมูลผู้ใช้');
+                }
+            } catch (err) {
+                alert('เกิดข้อผิดพลาด');
+            }
+        });
+
+        // Init
+        (async () => {
+            await checkAuth();
+            await loadProducts();
+            setupFilterListeners();
+            // If opened with ?edit_product_id=..., open edit modal
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const editId = params.get('edit_product_id');
+                if (editId) {
+                    // ensure auth loaded
+                    await openEditProduct(editId);
+                }
+            } catch (e) {
+                // ignore
+            }
+        })();
+
+        // Open interested modal for current user's products
+        async function openInterested() {
+            const token = localStorage.getItem(tokenKey);
+            if (!token) { alert('กรุณาเข้าสู่ระบบเพื่อดูผู้ที่สนใจ'); return; }
+            try {
+                // get current user id
+                const meRes = await fetch('/me', { headers: { 'Authorization': 'Bearer ' + token } });
+                const meData = await meRes.json();
+                if (!meData.loggedIn || !meData.user) { alert('กรุณาเข้าสู่ระบบ'); return; }
+                const sellerId = meData.user.user_id;
+                const res = await fetch('/seller/' + encodeURIComponent(sellerId) + '/interested', { headers: { 'Authorization': 'Bearer ' + token } });
+                const data = await res.json();
+                if (!data.success) { alert(data.message || 'ไม่สามารถโหลดข้อมูลได้'); return; }
+                const list = document.getElementById('interestedList');
+                list.innerHTML = '';
+                const items = data.interested || [];
+                if (!items.length) {
+                    list.innerHTML = '<div class="alert alert-info">ยังไม่มีใครแสดงความสนใจในสินค้าของคุณ</div>';
+                } else {
+                    items.forEach(prod => {
+                        const item = document.createElement('div');
+                        item.className = 'mb-3';
+                        const header = document.createElement('div');
+                        header.className = 'fw-bold mb-1';
+                        header.textContent = `${prod.title || ('สินค้ารหัส ' + prod.product_id)} (${prod.users.length || 0})`;
+                        item.appendChild(header);
+                        const ul = document.createElement('div');
+                        ul.className = 'list-group';
+                        (prod.users || []).forEach(u => {
+                            const uel = document.createElement('div');
+                            uel.className = 'list-group-item d-flex align-items-center';
+                            const avatar = u.profile_image ? `<img src="${escapeHtml(u.profile_image)}" style="width:40px;height:40px;object-fit:cover;border-radius:50%;margin-right:8px;">` : `<div style="width:40px;height:40px;border-radius:50%;background:#ddd;margin-right:8px"></div>`;
+                            const contacts = [];
+                            if (u.contact_facebook) contacts.push('Facebook: ' + escapeHtml(u.contact_facebook));
+                            if (u.contact_line) contacts.push('LINE: ' + escapeHtml(u.contact_line));
+                            if (u.contact_instagram) contacts.push('IG: ' + escapeHtml(u.contact_instagram));
+                            const contactHtml = contacts.length ? `<div class="small mt-1 text-muted">${contacts.join(' | ')}</div>` : '';
+                            uel.innerHTML = `${avatar}<div><div class="fw-bold">${escapeHtml(u.name || u.email || '')}</div><div class="text-muted small">${escapeHtml(u.email || '')}</div>${contactHtml}</div>`;
+                            ul.appendChild(uel);
+                        });
+                        item.appendChild(ul);
+                        list.appendChild(item);
+                    });
+                }
+                        const modalEl = document.getElementById('interestedModal');
+                        const modal = new bootstrap.Modal(modalEl);
+                        modal.show();
+            } catch (e) {
+                alert('เกิดข้อผิดพลาดในการโหลดข้อมูล');
+            }
+        }
+
+                // Also allow opening the full page view
+                document.getElementById('interestedBtn').addEventListener('click', () => {
+                    const token = localStorage.getItem(tokenKey);
+                    if (!token) return location.href = '/interested.html';
+                    // try to get user id then navigate
+                    (async () => {
+                        try {
+                            const meRes = await fetch('/me', { headers: { 'Authorization': 'Bearer ' + token } });
+                            const meData = await meRes.json();
+                            if (meData && meData.loggedIn && meData.user && meData.user.user_id) {
+                                window.location.href = `/interested.html?seller_id=${encodeURIComponent(meData.user.user_id)}`;
+                            } else {
+                                window.location.href = '/interested.html';
+                            }
+                        } catch (e) { window.location.href = '/interested.html'; }
+                    })();
+                });
+    </script>
+
+</body>
+
+</html>
